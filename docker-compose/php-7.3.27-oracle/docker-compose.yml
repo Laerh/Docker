@@ -1,0 +1,58 @@
+version: '3'
+services:
+  # php7.3.27 Service
+  app:
+    build:
+      context: /Dockerfiles/
+      dockerfile: php.Dockerfile
+    container_name: php7.3.27
+    restart: unless-stopped
+    tty: true
+    environment:
+      - SERVICE_NAME=app
+      - SERVICE_TAG=dev
+    working_dir: /var/www/html
+    volumes:
+      - ./code/:/var/www/html
+      - ./Dockerfiles/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+    networks:
+      # app_network:
+      #   aliases:
+      #     - backend_host
+      - labnet
+
+  #Nginx Service
+  nginx:
+    image: nginx:1.22.0-alpine
+    container_name: nginx
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "80:80"
+    volumes:
+      - ./code/:/var/www/html
+      - ./config/conf.d/:/etc/nginx/conf.d/
+    networks:
+      # app_network:
+      #   aliases:
+      #     - frontend_host
+      - labnet
+
+# volumes:
+#   code: {}
+
+#Docker Networks
+# networks:
+#   app_network:
+#     name: app_net
+#     driver: bridge
+#     ipam:
+#       driver: default
+#     # external:
+#     #   name: app_net
+
+#Docker Networks
+networks:
+  labnet: 
+    external:
+      name: labnet

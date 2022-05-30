@@ -1,0 +1,51 @@
+version: '3.8'
+services:
+  nginx:
+    build: 
+      context: Dockerfiles/nginx_1.22.0-alpine
+      dockerfile: Dockerfile
+      args:
+        - MYARGUMENTO= 'Soy un argumento desde Docker-compose'
+    # command: command
+    container_name: nginx_svc
+    restart: always
+    environment:
+      - mivariable="esta es mi variable"
+    ports:
+      - 8080:80
+    volumes:
+      - ./html/:/usr/share/nginx/html
+    networks:
+      nginx_network:
+        aliases:
+          - nginx_host
+
+  nginx2:
+    build: 
+      context: Dockerfiles/nginx_1.22.0-alpine
+      dockerfile: Dockerfile
+      args:
+        - MYARGUMENTO= 'Soy un argumento desde Docker-compose'
+    # command: command
+    container_name: nginx_svc2
+    restart: always
+    environment:
+      - mivariable="esta es mi variable"
+    ports:
+      - 8081:80
+    volumes:
+      - ./html2/:/usr/share/nginx/html
+    networks:
+      nginx_network:
+        aliases:
+          - nginx2_host
+
+volumes:
+  code: {}
+
+networks:
+  nginx_network:
+    name: nginx_net
+    driver: bridge
+    ipam:
+      driver: default
